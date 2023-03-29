@@ -1,7 +1,10 @@
 const validateSchema = (schema) => {
   return (req, res, next) => {
     const { error } = schema.validate(req.body, { abortEarly: false });
-    if (error) return res.status(422).send(error.details);
+    if (error) {
+      error.statusCode = 422;
+      next(error);
+    }
     next();
   };
 };
