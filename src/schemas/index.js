@@ -12,7 +12,7 @@ export const doctorSignUp = Joi.object({
   name: Joi.string().pattern(new RegExp(`^[a-zA-Z\u00C0-\u00FF ]{2,50}$`)),
   email: Joi.string().email(),
   password: Joi.string().min(8).max(16),
-  specialty: Joi.number().positive().integer(),
+  specialtyId: Joi.number().positive().integer(),
 })
   .options({ presence: "required" })
   .required();
