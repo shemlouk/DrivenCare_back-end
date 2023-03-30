@@ -1,7 +1,9 @@
 import Joi from "joi";
 
 const onlyLettersRegex = (min, max) =>
-  new RegExp(`/^[a-zA-Z\u00C0-\u00FF ]{${min},${max}}$/`);
+  new RegExp(`^[a-zA-Z\u00C0-\u00FF ]{${min},${max}}$`);
+
+const timeFormatRegex = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
 
 export const userSignUp = Joi.object({
   name: Joi.string().pattern(onlyLettersRegex(2, 50)),
@@ -40,7 +42,8 @@ export const doctorOffice = Joi.object({
 
 export const doctorSchedule = Joi.object({
   date: Joi.date(),
-  time: Joi.string().pattern(/^([01][0-9]|2[0-3]):[0-5][0-9]$/),
+  startTime: Joi.string().pattern(timeFormatRegex),
+  endTime: Joi.string().pattern(timeFormatRegex).invalid(Joi.ref("startTime")),
 })
   .options({ presence: "required" })
   .required();
