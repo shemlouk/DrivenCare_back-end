@@ -1,7 +1,10 @@
 import Joi from "joi";
 
+const onlyLettersRegex = (min, max) =>
+  new RegExp(`/^[a-zA-Z\u00C0-\u00FF ]{${min},${max}}$/`);
+
 export const userSignUp = Joi.object({
-  name: Joi.string().pattern(new RegExp(`^[a-zA-Z\u00C0-\u00FF ]{2,50}$`)),
+  name: Joi.string().pattern(onlyLettersRegex(2, 50)),
   email: Joi.string().email(),
   password: Joi.string().min(8).max(16),
 })
@@ -9,7 +12,7 @@ export const userSignUp = Joi.object({
   .required();
 
 export const doctorSignUp = Joi.object({
-  name: Joi.string().pattern(new RegExp(`^[a-zA-Z\u00C0-\u00FF ]{2,50}$`)),
+  name: Joi.string().pattern(onlyLettersRegex(2, 50)),
   email: Joi.string().email(),
   password: Joi.string().min(8).max(16),
   specialtyId: Joi.number().positive().integer(),
@@ -25,12 +28,19 @@ export const signIn = Joi.object({
   .required();
 
 export const doctorOffice = Joi.object({
-  city: Joi.string().pattern(new RegExp(`^[a-zA-Z\u00c0-\u00FF ]{3,30}$`)),
-  state: Joi.string().pattern(new RegExp(`^[A-Z]{2}$`)),
+  city: Joi.string().pattern(onlyLettersRegex(3, 30)),
+  state: Joi.string().pattern(/^[A-Z]{2}$/),
   street: Joi.string().min(5),
-  zip_code: Joi.string().pattern(new RegExp(`^[0-9]{8}$`)),
+  zip_code: Joi.string().pattern(/^[0-9]{8}$/),
   neighborhood: Joi.string().min(3),
   address_number: Joi.string().max(6).alphanum(),
+})
+  .options({ presence: "required" })
+  .required();
+
+export const doctorSchedule = Joi.object({
+  date: Joi.date(),
+  time: Joi.string().pattern(/^([01][0-9]|2[0-3]):[0-5][0-9]$/),
 })
   .options({ presence: "required" })
   .required();
