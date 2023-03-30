@@ -30,7 +30,8 @@ CREATE TABLE
     id SERIAL,
     doctor_id INTEGER NOT NULL REFERENCES doctors (id),
     date DATE NOT NULL,
-    time TIME NOT NULL
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL
   );
 
 CREATE TABLE
