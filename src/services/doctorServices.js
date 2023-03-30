@@ -73,6 +73,42 @@ const createOffice = async ({
   });
 };
 
+const createSchedule = async ({ id, date, startTime, endTime }) => {
+  const dateRef = (time) => new Date(`${date} ${time}`);
+
+  /* Checks if date and time are valid */
+  if (dateRef(startTime) <= new Date()) {
+    const error = new Error("Date or time are invalid.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  /* Checks if timestamp is valid */
+  if ((dateRef(endTime) - dateRef(startTime)) / 60000 < 30) {
+    const error = new Error("Minimum timestamp is 30 minutes.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  /* Checks if time is within an already scheduled interval*/
+  const { rows: intervals } =
+    await doctorRepository.getIntervalsFromDateByDoctorId(id, date);
+
+  for (const interval of intervals) {
+    const timeIsWithin = (time) =>
+      time + ":00" >= interval.start_time && time + ":00" <= interval.end_time;
+
+    if (timeIsWithin(startTime) || timeIsWithin(endTime)) {
+      const error = new Error("Date and time are within another schedule.");
+      error.statusCode = 409;
+      throw error;
+    }
+  }
+
+  /* Registers the schedule */
+  await doctorRepository.createSchedule({ id, date, startTime, endTime });
+};
+
 const signIn = async ({ email, password }) => {
   const {
     rows: [doctor],
@@ -93,4 +129,4 @@ const signIn = async ({ email, password }) => {
   };
 };
 
-export default { create, createOffice, signIn };
+export default { create, createOffice, createSchedule, signIn };

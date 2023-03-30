@@ -39,6 +39,17 @@ const createOffice = async ({
   return res;
 };
 
+const createSchedule = async ({ id, date, startTime, endTime }) => {
+  const res = await db.query(
+    `
+      INSERT INTO doctors_schedule (doctor_id, date, start_time, end_time)
+      VALUES ($1, $2, $3, $4)
+    `,
+    [id, date, startTime, endTime]
+  );
+  return res;
+};
+
 const findByEmail = async (email) => {
   const res = await db.query(
     `
@@ -69,10 +80,25 @@ const findOfficeByDoctorId = async (id) => {
   return res;
 };
 
+const getIntervalsFromDateByDoctorId = async (id, date) => {
+  const res = db.query(
+    `
+      SELECT id, start_time, end_time
+      FROM doctors_schedule
+      WHERE doctor_id = $1
+        AND date = $2
+    `,
+    [id, date]
+  );
+  return res;
+};
+
 export default {
   create,
   createOffice,
+  createSchedule,
   findByEmail,
   findById,
   findOfficeByDoctorId,
+  getIntervalsFromDateByDoctorId,
 };

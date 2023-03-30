@@ -21,6 +21,17 @@ const createOffice = async (req, res, next) => {
   }
 };
 
+const createSchedule = async (req, res, next) => {
+  const doctorId = Number(res.locals.session);
+  const data = req.body;
+  try {
+    await doctorServices.createSchedule({ ...data, id: doctorId });
+    res.sendStatus(201);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const signIn = async (req, res, next) => {
   const data = req.body;
   try {
@@ -31,4 +42,4 @@ const signIn = async (req, res, next) => {
   }
 };
 
-export default { create, createOffice, signIn };
+export default { create, createOffice, createSchedule, signIn };
