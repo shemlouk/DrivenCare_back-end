@@ -16,3 +16,10 @@ export const doctorSignUp = Joi.object({
 })
   .options({ presence: "required" })
   .required();
+
+export const signIn = Joi.object({
+  email: Joi.string().email(),
+  password: Joi.string().min(8).max(16),
+})
+  .options({ presence: "required" })
+  .required();
