@@ -37,7 +37,7 @@ CREATE TABLE
   doctors_office (
     PRIMARY KEY (id),
     id SERIAL,
-    doctor_id INTEGER NOT NULL REFERENCES doctors (id),
+    doctor_id INTEGER NOT NULL UNIQUE REFERENCES doctors (id),
     city VARCHAR(30) NOT NULL,
     state VARCHAR(2) NOT NULL,
     street VARCHAR(255) NOT NULL,
