@@ -23,3 +23,14 @@ export const signIn = Joi.object({
 })
   .options({ presence: "required" })
   .required();
+
+export const doctorOffice = Joi.object({
+  city: Joi.string().pattern(new RegExp(`^[a-zA-Z\u00c0-\u00FF ]{3,30}$`)),
+  state: Joi.string().pattern(new RegExp(`^[A-Z]{2}$`)),
+  street: Joi.string().min(5).alphanum(),
+  zip_code: Joi.string().pattern(new RegExp(`^[0-9]{8}$`)),
+  neighborhood: Joi.string().min(3).alphanum(),
+  address_number: Joi.string().max(6).alphanum(),
+})
+  .options({ presence: "required" })
+  .required();
