@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const create = async ({ name, email, password, specialty }) => {
+const create = async ({ name, email, password, specialtyId }) => {
   /* Checks if email is already signed up */
   const { rowCount: isDuplicate } = await doctorRepository.findByEmail(email);
   if (isDuplicate) {
@@ -17,7 +17,7 @@ const create = async ({ name, email, password, specialty }) => {
 
   /* Checks if specialty exists in database */
   const { rowCount: specialtyExists } = await specialtyRepository.findById(
-    specialty
+    specialtyId
   );
   if (!specialtyExists) {
     const error = new Error("Specialty does not exists.");
@@ -30,8 +30,46 @@ const create = async ({ name, email, password, specialty }) => {
   await doctorRepository.create({
     name,
     email,
-    specialty,
+    specialtyId,
     password: hashPassword,
+  });
+};
+
+const createOffice = async ({
+  address_number,
+  neighborhood,
+  zip_code,
+  street,
+  state,
+  city,
+  id,
+}) => {
+  /* Checks if doctor's id exists */
+  const { rowCount: doctorExists } = await doctorRepository.findById(id);
+  if (!doctorExists) {
+    const error = new Error("Doctor's id not found on database.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  /* Checks if doctor already has an office registered */
+  const { rowCount: officeExists } =
+    await doctorRepository.findOfficeByDoctorId(id);
+  if (officeExists) {
+    const error = new Error("Doctor already has an office registered.");
+    error.statusCode = 409;
+    throw error;
+  }
+
+  /* Creates doctor's office */
+  await doctorRepository.createOffice({
+    id,
+    city,
+    state,
+    street,
+    zip_code,
+    neighborhood,
+    address_number,
   });
 };
 
@@ -51,8 +89,8 @@ const signIn = async ({ email, password }) => {
   return {
     id: doctor.id,
     name: doctor.name,
-    token: jwt.sign({ id: doctor.id }, process.env.SECRET),
+    token: jwt.sign({ id: doctor.id }, process.env.SECRET_KEY),
   };
 };
 
-export default { create, signIn };
+export default { create, createOffice, signIn };
