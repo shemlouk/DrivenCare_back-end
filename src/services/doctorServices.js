@@ -40,7 +40,7 @@ const signIn = async ({ email, password }) => {
     rows: [doctor],
   } = await doctorRepository.findByEmail(email);
 
-  const passwordsMatched = bcrypt.compareSync(password, doctor?.password);
+  const passwordsMatched = bcrypt.compareSync(password, doctor?.password || "");
 
   if (!passwordsMatched) {
     const error = new Error("Incorrent email or password.");
